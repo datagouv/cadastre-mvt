@@ -27,7 +27,7 @@ yarn generate-mvt 971 972
 
 ## Aperçu des tuiles
 
-Le plus simple est d'utiliser [mbview](https://github.com/mbview).
+Le plus simple est d'utiliser [mbview](https://github.com/mapbox/mbview).
 
 ```
 mbview dist/cadastre.mbtiles
