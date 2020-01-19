@@ -18,7 +18,11 @@ yarn --prod
 ### Génération des tuiles
 
 ```bash
+# France entière
 yarn generate-mvt
+
+# Liste de départements
+yarn generate-mvt 971 972
 ```
 
 ## Licence

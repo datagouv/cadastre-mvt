@@ -14,7 +14,10 @@ const pumpify = require('pumpify')
 const departements = require('@etalab/decoupage-administratif/data/departements.json')
 
 const cache = new Keyv('sqlite://cadastre-cache.sqlite')
-const codesDepartements = departements.map(d => d.code)
+
+const codesDepartements = process.argv.length > 2 ?
+  process.argv.slice(2) :
+  departements.map(d => d.code)
 
 function getCadastreLayerURL(layerName, codeDepartement) {
   return `https://cadastre.data.gouv.fr/data/etalab-cadastre/latest/geojson/departements/${codeDepartement}/cadastre-${codeDepartement}-${layerName}.json.gz`
