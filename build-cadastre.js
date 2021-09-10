@@ -4,7 +4,6 @@ const {Transform} = require('stream')
 const MultiStream = require('multistream')
 const {ensureDir} = require('fs-extra')
 const got = require('got')
-const Keyv = require('keyv')
 const execa = require('execa')
 const {stringify} = require('ndjson')
 const {parse} = require('JSONStream')
@@ -12,8 +11,6 @@ const {createGunzip} = require('gunzip-stream')
 const intoStream = require('into-stream')
 const pumpify = require('pumpify')
 const departements = require('@etalab/decoupage-administratif/data/departements.json')
-
-const cache = new Keyv('sqlite://cadastre-cache.sqlite')
 
 const codesDepartements = process.argv.length > 2 ?
   process.argv.slice(2) :
@@ -24,7 +21,7 @@ function getCadastreLayerURL(layerName, codeDepartement) {
 }
 
 async function getCadastreLayerFile(layerName, codeDepartement) {
-  const response = await got(getCadastreLayerURL(layerName, codeDepartement), {cache, responseType: 'buffer'})
+  const response = await got(getCadastreLayerURL(layerName, codeDepartement), {responseType: 'buffer'})
   return response.body
 }
 
