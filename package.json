@@ -19,7 +19,6 @@
     "fs-extra": "^8.1.0",
     "got": "^10.2.2",
     "gunzip-stream": "^1.0.1",
-    "into-stream": "^5.1.1",
     "lodash": "^4.17.15",
     "multistream": "3.0.0",
     "ndjson": "^1.5.0",

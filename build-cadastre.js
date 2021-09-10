@@ -8,7 +8,6 @@ const execa = require('execa')
 const {stringify} = require('ndjson')
 const {parse} = require('JSONStream')
 const {createGunzip} = require('gunzip-stream')
-const intoStream = require('into-stream')
 const pumpify = require('pumpify')
 const departements = require('@etalab/decoupage-administratif/data/departements.json')
 
@@ -18,11 +17,6 @@ const codesDepartements = process.argv.length > 2 ?
 
 function getCadastreLayerURL(layerName, codeDepartement) {
   return `https://cadastre.data.gouv.fr/data/etalab-cadastre/latest/geojson/departements/${codeDepartement}/cadastre-${codeDepartement}-${layerName}.json.gz`
-}
-
-async function getCadastreLayerFile(layerName, codeDepartement) {
-  const response = await got(getCadastreLayerURL(layerName, codeDepartement), {responseType: 'buffer'})
-  return response.body
 }
 
 function featuresToString(inputStream) {
@@ -48,9 +42,8 @@ function getCadastreFeatureStream(layerName, codesDepartements) {
 
     try {
       const codeDepartement = remainingDepartements.shift()
-      const file = await getCadastreLayerFile(layerName, codeDepartement)
       const stream = pumpify.obj(
-        intoStream(file),
+        got.stream(getCadastreLayerURL(layerName, codeDepartement)),
         createGunzip(),
         parse('features.*')
       )
