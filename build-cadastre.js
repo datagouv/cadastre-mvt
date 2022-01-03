@@ -2,7 +2,7 @@
 const {join} = require('path')
 const {Transform} = require('stream')
 const MultiStream = require('multistream')
-const {ensureDir} = require('fs-extra')
+const {ensureDir, createReadStream} = require('fs-extra')
 const got = require('got')
 const execa = require('execa')
 const {stringify} = require('ndjson')
@@ -10,13 +10,15 @@ const {parse} = require('JSONStream')
 const {createGunzip} = require('gunzip-stream')
 const pumpify = require('pumpify')
 const departements = require('@etalab/decoupage-administratif/data/departements.json')
+const args = require('minimist')(process.argv.slice(2))
 
-const codesDepartements = process.argv.length > 2 ?
-  process.argv.slice(2) :
+const codesDepartements = args._.length > 0 ?
+  args._.map(el => {return String(el).startsWith('97') ? String(el) : String(el).padStart(2, '0')}) :
   departements.map(d => d.code)
 
+const baseURL = args.baseurl || "https://cadastre.data.gouv.fr/data/etalab-cadastre/latest/geojson/departements"
 function getCadastreLayerURL(layerName, codeDepartement) {
-  return `https://cadastre.data.gouv.fr/data/etalab-cadastre/latest/geojson/departements/${codeDepartement}/cadastre-${codeDepartement}-${layerName}.json.gz`
+  return `${baseURL}/${codeDepartement}/cadastre-${codeDepartement}-${layerName}.json.gz`
 }
 
 function featuresToString(inputStream) {
@@ -42,11 +44,16 @@ function getCadastreFeatureStream(layerName, codesDepartements) {
 
     try {
       const codeDepartement = remainingDepartements.shift()
-      const stream = pumpify.obj(
-        got.stream(getCadastreLayerURL(layerName, codeDepartement)),
+      let params = [
         createGunzip(),
         parse('features.*')
-      )
+      ]
+      if (getCadastreLayerURL(layerName, codeDepartement).startsWith('http')) {
+        params = [got.stream(getCadastreLayerURL(layerName, codeDepartement)), ...params]
+      } else {
+        params = [createReadStream(getCadastreLayerURL(layerName, codeDepartement)), ...params]
+      }
+      const stream = pumpify.obj(...params)
 
       cb(null, stream)
     } catch (error) {

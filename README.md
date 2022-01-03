@@ -23,6 +23,11 @@ yarn generate-mvt
 
 # Liste de départements
 yarn generate-mvt 971 972
+
+# Avec une structure similaire de l'arborescence à https://cadastre.data.gouv.fr/data/etalab-cadastre/latest/geojson/departements/, vous pouvez aussi faire
+yarn generate-mvt --baseurl /srv/cadastre/etalab-cadastre/etalab-cadastre/geojson/departements
+# ou
+yarn generate-mvt --baseurl /srv/cadastre/etalab-cadastre/etalab-cadastre/geojson/departements 44 35
 ```
 
 ## Aperçu des tuiles
