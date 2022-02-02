@@ -17,6 +17,8 @@ yarn --prod
 
 ### Génération des tuiles
 
+Par défaut, l'outil télécharge les fichiers à distance. Il est possible avec l'option `--baseurl` de travailler avec des fichiers en local. Ce cas de figure est utile avant tout pour Etalab dans ses traitements.
+
 ```bash
 # France entière
 yarn generate-mvt
